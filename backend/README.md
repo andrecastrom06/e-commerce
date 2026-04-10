@@ -76,6 +76,33 @@ alembic downgrade -1
 
 ---
 
+## Importar dados CSV
+
+Coloque os arquivos CSV em `backend/data/` e use o script de importação:
+
+```bash
+cd backend
+python import_from_csv.py
+```
+
+Os arquivos esperados são:
+- `dim_produtos.csv`
+- `dim_consumidores.csv`
+- `dim_vendedores.csv`
+- `fat_pedidos.csv`
+- `fat_itens_pedidos.csv`
+- `fat_avaliacoes_pedidos.csv`
+
+Se o banco `backend/database.db` já existir com um esquema antigo, recrie-o antes de importar:
+
+```bash
+python import_from_csv.py --reset
+```
+
+O script cria as tabelas no SQLite e insere os registros do CSV no banco `database.db`.
+
+---
+
 ## Rodando a API
 
 ```bash
