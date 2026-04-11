@@ -24,7 +24,7 @@ def create_tables_on_startup():
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # URLs do frontend
+    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],  # URLs do frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,19 +43,36 @@ def get_products(
     skip: int = 0,
     limit: int = 12
 ):
-    query = db.query(models.Produto)
+    from sqlalchemy.orm import joinedload
+    query = db.query(models.Produto).options(joinedload(models.Produto.categoria_imagem))
     if search:
         query = query.filter(models.Produto.nome_produto.contains(search))
     
     total = query.count()
     products = query.offset(skip).limit(limit).all()
     
-    return {"total": total, "products": products}
+    # Construir resposta manualmente para incluir image_url
+    products_data = []
+    for product in products:
+        product_dict = {
+            "id_produto": product.id_produto,
+            "nome_produto": product.nome_produto,
+            "categoria_produto": product.categoria_produto,
+            "peso_produto_gramas": product.peso_produto_gramas,
+            "comprimento_centimetros": product.comprimento_centimetros,
+            "altura_centimetros": product.altura_centimetros,
+            "largura_centimetros": product.largura_centimetros,
+            "image_url": product.image_url,
+        }
+        products_data.append(product_dict)
+    
+    return {"total": total, "products": products_data}
 
 # Endpoint de Detalhes (Cálculo de Média e Vendas)
 @app.get("/products/{product_id}", tags=["Products"])
 def get_product_details(product_id: str, db: Session = Depends(database.get_db)):
-    product = db.query(models.Produto).filter(models.Produto.id_produto == product_id).first()
+    from sqlalchemy.orm import joinedload
+    product = db.query(models.Produto).options(joinedload(models.Produto.categoria_imagem)).filter(models.Produto.id_produto == product_id).first()
     
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -68,8 +85,20 @@ def get_product_details(product_id: str, db: Session = Depends(database.get_db))
         .join(models.ItemPedido, models.ItemPedido.id_pedido == models.AvaliacaoPedido.id_pedido)\
         .filter(models.ItemPedido.id_produto == product_id).scalar()
 
+    # Construir info manualmente para incluir image_url
+    product_info = {
+        "id_produto": product.id_produto,
+        "nome_produto": product.nome_produto,
+        "categoria_produto": product.categoria_produto,
+        "peso_produto_gramas": product.peso_produto_gramas,
+        "comprimento_centimetros": product.comprimento_centimetros,
+        "altura_centimetros": product.altura_centimetros,
+        "largura_centimetros": product.largura_centimetros,
+        "image_url": product.image_url,
+    }
+
     return {
-        "info": product,
+        "info": product_info,
         "metrics": {
             "total_sales": total_vendas,
             "average_rating": round(media_nota, 2) if media_nota else 0

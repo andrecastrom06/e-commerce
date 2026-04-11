@@ -87,11 +87,14 @@ python import_from_csv.py
 
 Os arquivos esperados são:
 - `dim_produtos.csv`
+- `dim_categoria_imagens.csv`
 - `dim_consumidores.csv`
 - `dim_vendedores.csv`
 - `fat_pedidos.csv`
 - `fat_itens_pedidos.csv`
 - `fat_avaliacoes_pedidos.csv`
+
+O arquivo `dim_categoria_imagens.csv` relaciona categorias a URLs de imagem de produto para exibição no frontend.
 
 Se o banco `backend/database.db` já existir com um esquema antigo, recrie-o antes de importar:
 
@@ -109,9 +112,15 @@ O script cria as tabelas no SQLite e insere os registros do CSV no banco `databa
 python -m app.main
 ```
 
+Se preferir rodar com recarga automática, use:
+
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
 A API estará disponível em: [http://localhost:8000](http://localhost:8000)
 
-Documentação: [http://localhost:8000/docs](http://localhost:8000/docs)
+Documentação interativa: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 

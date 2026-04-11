@@ -5,6 +5,7 @@ from app.models.vendedor import Vendedor
 from app.models.pedido import Pedido
 from app.models.item_pedido import ItemPedido
 from app.models.avaliacao_pedido import AvaliacaoPedido
+from app.models.categoria_imagem import CategoriaImagem
 
 __all__ = [
     "Consumidor",
@@ -13,4 +14,5 @@ __all__ = [
     "Pedido",
     "ItemPedido",
     "AvaliacaoPedido",
+    "CategoriaImagem",
 ]

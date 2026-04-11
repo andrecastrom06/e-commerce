@@ -17,3 +17,15 @@ class Produto(Base):
     altura_centimetros: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     largura_centimetros: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
+    categoria_imagem: Mapped[Optional["CategoriaImagem"]] = relationship(
+        "CategoriaImagem",
+        primaryjoin="Produto.categoria_produto == foreign(CategoriaImagem.categoria)",
+        viewonly=True,
+        back_populates="produtos",
+        uselist=False,
+    )
+
+    @property
+    def image_url(self) -> Optional[str]:
+        return self.categoria_imagem.link if self.categoria_imagem else None
+

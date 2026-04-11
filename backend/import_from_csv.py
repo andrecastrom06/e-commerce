@@ -9,6 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from app.database import Base, SessionLocal, engine
 from app.models import (
     AvaliacaoPedido,
+    CategoriaImagem,
     Consumidor,
     ItemPedido,
     Pedido,
@@ -132,6 +133,17 @@ MODEL_CONFIG = {
             "data_resposta": lambda v: parse_datetime(v),
         },
     },
+    "dim_categoria_imagens.csv": {
+        "model": CategoriaImagem,
+        "fields": [
+            "categoria",
+            "link",
+        ],
+        "csv_fields": {
+            "categoria": "Categoria",
+            "link": "Link",
+        },
+    },
 }
 
 
@@ -181,8 +193,9 @@ def load_csv(filename, model_info, session):
         for row in reader:
             data = {}
             for field in model_info["fields"]:
+                csv_field = model_info.get("csv_fields", {}).get(field, field)
                 converter = model_info.get("converters", {}).get(field)
-                data[field] = normalize(row.get(field, ""), converter)
+                data[field] = normalize(row.get(csv_field, ""), converter)
             obj = model_info["model"](**data)
             try:
                 session.merge(obj)
