@@ -1,9 +1,9 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Product } from '../types';
+import { Product, ProductCreate, ProductUpdate } from '../types';
 
-const emptyProduct: Product = {
+const emptyProduct: ProductCreate = {
   id_produto: '',
   nome_produto: '',
   categoria_produto: '',
@@ -11,15 +11,32 @@ const emptyProduct: Product = {
   comprimento_centimetros: null,
   altura_centimetros: null,
   largura_centimetros: null,
+  nova_categoria: null,
+  categoria_imagem_url: null,
 };
 
 export const ProductForm = () => {
   const { id } = useParams<{ id?: string }>();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<Product>(emptyProduct);
+  const [product, setProduct] = useState<ProductCreate>(emptyProduct);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const isEditMode = Boolean(id);
+
+  useEffect(() => {
+    // Carregar categorias existentes
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get<{ categories: string[] }>('http://localhost:8000/categories');
+        setCategories(response.data.categories);
+      } catch (err) {
+        console.error('Erro ao carregar categorias:', err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (!isEditMode || !id) return;
@@ -41,7 +58,7 @@ export const ProductForm = () => {
     fetchProduct();
   }, [id, isEditMode]);
 
-  const handleChange = (field: keyof Product, value: string) => {
+  const handleChange = (field: keyof ProductCreate, value: string) => {
     setProduct((current) => ({
       ...current,
       [field]: ['peso_produto_gramas', 'comprimento_centimetros', 'altura_centimetros', 'largura_centimetros'].includes(field)
@@ -57,16 +74,74 @@ export const ProductForm = () => {
     setError('');
     setLoading(true);
 
+    // Validações
+    if (!product.id_produto.trim()) {
+      setError('ID do produto é obrigatório.');
+      setLoading(false);
+      return;
+    }
+
+    if (!product.nome_produto.trim()) {
+      setError('Nome do produto é obrigatório.');
+      setLoading(false);
+      return;
+    }
+
+    if (!isEditMode && product.categoria_produto === 'outra' && !product.nova_categoria?.trim()) {
+      setError('Nome da nova categoria é obrigatório quando categoria é "Outra".');
+      setLoading(false);
+      return;
+    }
+
+    // Validações de valores positivos
+    const camposPositivos = [
+      { campo: product.peso_produto_gramas, nome: 'Peso' },
+      { campo: product.comprimento_centimetros, nome: 'Comprimento' },
+      { campo: product.altura_centimetros, nome: 'Altura' },
+      { campo: product.largura_centimetros, nome: 'Largura' },
+    ];
+
+    for (const { campo, nome } of camposPositivos) {
+      if (campo !== null && campo !== undefined && campo <= 0) {
+        setError(`${nome} deve ser um valor positivo.`);
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       if (isEditMode && id) {
-        await axios.put(`http://localhost:8000/products/${id}`, product);
-        navigate(`/product/${id}`);
+        // Para edição, enviar apenas campos de ProductUpdate
+        const updateData: ProductUpdate = {
+          nome_produto: product.nome_produto,
+          categoria_produto: product.categoria_produto,
+          peso_produto_gramas: product.peso_produto_gramas,
+          comprimento_centimetros: product.comprimento_centimetros,
+          altura_centimetros: product.altura_centimetros,
+          largura_centimetros: product.largura_centimetros,
+        };
+        const response = await axios.put(`http://localhost:8000/products/${id}`, updateData);
+        if (response.status === 200) {
+          navigate(`/product/${id}`);
+        }
       } else {
-        await axios.post('http://localhost:8000/products', product);
-        navigate(`/product/${product.id_produto}`);
+        const response = await axios.post('http://localhost:8000/products', product);
+        if (response.status === 201) {
+          navigate(`/product/${product.id_produto}`);
+        }
       }
-    } catch (err) {
-      setError('Falha ao salvar o produto. Verifique os campos e tente novamente.');
+    } catch (err: any) {
+      if (err.response?.data?.detail) {
+        setError(err.response.data.detail);
+      } else if (err.response?.data) {
+        // Pydantic validation error
+        const errors = Array.isArray(err.response.data.detail) 
+          ? err.response.data.detail.map((e: any) => e.msg).join(', ')
+          : JSON.stringify(err.response.data.detail);
+        setError(errors);
+      } else {
+        setError('Falha ao salvar o produto. Verifique os campos e tente novamente.');
+      }
     } finally {
       setLoading(false);
     }
@@ -115,12 +190,45 @@ export const ProductForm = () => {
 
           <label className="block">
             <span className="text-gray-700">Categoria</span>
-            <input
+            <select
               value={product.categoria_produto ?? ''}
               onChange={(e) => handleChange('categoria_produto', e.target.value)}
               className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
-            />
+            >
+              <option value="">Selecione uma categoria</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+              <option value="outra">Outra</option>
+            </select>
           </label>
+
+          {product.categoria_produto === 'outra' && (
+            <>
+              <label className="block">
+                <span className="text-gray-700">Nome da nova categoria *</span>
+                <input
+                  value={product.nova_categoria ?? ''}
+                  onChange={(e) => handleChange('nova_categoria', e.target.value)}
+                  className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+                  placeholder="Digite o nome da nova categoria"
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-gray-700">URL da imagem da categoria (opcional)</span>
+                <input
+                  value={product.categoria_imagem_url ?? ''}
+                  onChange={(e) => handleChange('categoria_imagem_url', e.target.value)}
+                  type="url"
+                  className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+                  placeholder="https://exemplo.com/imagem.jpg"
+                />
+              </label>
+            </>
+          )}
         </div>
 
         <div className="space-y-4">
@@ -168,7 +276,7 @@ export const ProductForm = () => {
         <div className="md:col-span-2 flex items-center gap-3">
           <button
             type="submit"
-            disabled={loading || !product.id_produto || !product.nome_produto}
+            disabled={loading || !product.id_produto.trim() || !product.nome_produto.trim() || (!isEditMode && product.categoria_produto === 'outra' && !product.nova_categoria?.trim())}
             className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
             {loading ? 'Salvando...' : isEditMode ? 'Salvar alterações' : 'Criar produto'}
