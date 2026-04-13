@@ -4,7 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        'visagio-blue': '#003366', // Exemplo de cor institucional
+        primary: '#BDE2A7',
+        'primary-strong': '#6FBF73',
+        'primary-dark': '#2E7D32',
+        background: '#FFFFFF',
+        surface: '#F5F7F6',
+        'text-primary': '#1C1C1C',
+        'text-secondary': '#9E9E9E',
       }
     },
   },

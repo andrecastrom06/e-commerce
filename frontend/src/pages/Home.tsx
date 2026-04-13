@@ -73,14 +73,14 @@ export const Home = () => {
     <div className="container mx-auto p-6">
       <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Catálogo de Produtos</h1>
-          <p className="text-gray-500">Pesquisa de produtos, navegação e visão geral de estoque.</p>
+          <h1 className="text-3xl font-bold text-text-primary">Catálogo de Produtos</h1>
+          <p className="text-text-secondary">Pesquisa de produtos, navegação e visão geral de estoque.</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <Link
             to="/product/new"
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-center"
+            className="px-4 py-2 bg-primary-strong text-white rounded hover:bg-primary-dark transition-colors text-center"
           >
             Novo produto
           </Link>
@@ -89,7 +89,7 @@ export const Home = () => {
             placeholder="Buscar produto..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border p-2 rounded w-full sm:w-96 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="border border-text-secondary p-2 rounded w-full sm:w-96 shadow-sm focus:ring-2 focus:ring-primary-strong outline-none"
           />
         </div>
       </header>
@@ -97,11 +97,11 @@ export const Home = () => {
       {/* Filtros e Ordenação */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="flex flex-col">
-          <label className="text-sm font-medium text-gray-700 mb-1">Categoria</label>
+          <label className="text-sm font-medium text-text-primary mb-1">Categoria</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="border p-2 rounded shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="border border-text-secondary p-2 rounded shadow-sm focus:ring-2 focus:ring-primary-strong outline-none"
           >
             <option value="todas">Todas as categorias</option>
             {categories.map((cat) => (
@@ -113,11 +113,11 @@ export const Home = () => {
         </div>
 
         <div className="flex flex-col">
-          <label className="text-sm font-medium text-gray-700 mb-1">Ordenar por</label>
+          <label className="text-sm font-medium text-text-primary mb-1">Ordenar por</label>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="border p-2 rounded shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="border border-text-secondary p-2 rounded shadow-sm focus:ring-2 focus:ring-primary-strong outline-none"
           >
             <option value="nome">A - Z (Alfabético)</option>
             <option value="avaliacao">Melhor Avaliação</option>
@@ -128,7 +128,7 @@ export const Home = () => {
 
       {error && <p className="text-red-600 mb-4">{error}</p>}
       {loading ? (
-        <p className="text-gray-700">Carregando produtos...</p>
+        <p className="text-text-secondary">Carregando produtos...</p>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -144,23 +144,23 @@ export const Home = () => {
           </div>
 
           {products.length === 0 && (
-            <p className="text-gray-700 mt-6">Nenhum produto encontrado para a busca atual.</p>
+            <p className="text-text-secondary mt-6">Nenhum produto encontrado para a busca atual.</p>
           )}
 
           <div className="flex flex-col sm:flex-row justify-between items-center mt-10 gap-4">
-            <p className="text-gray-600">Página {page + 1} de {Math.max(1, Math.ceil(total / limit))}</p>
+            <p className="text-text-secondary">Página {page + 1} de {Math.max(1, Math.ceil(total / limit))}</p>
             <div className="flex gap-4">
               <button
                 disabled={page === 0}
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
-                className="px-6 py-2 bg-gray-800 text-white rounded disabled:opacity-50"
+                className="px-6 py-2 bg-primary-strong text-white rounded hover:bg-primary-dark disabled:opacity-50 transition-colors"
               >
                 Anterior
               </button>
               <button
                 disabled={(page + 1) * limit >= total}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-6 py-2 bg-gray-800 text-white rounded disabled:opacity-50"
+                className="px-6 py-2 bg-primary-strong text-white rounded hover:bg-primary-dark disabled:opacity-50 transition-colors"
               >
                 Próxima
               </button>

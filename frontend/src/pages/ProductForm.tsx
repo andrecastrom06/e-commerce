@@ -151,15 +151,15 @@ export const ProductForm = () => {
     <div className="container mx-auto p-6">
       <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-text-primary">
             {isEditMode ? 'Editar produto' : 'Novo produto'}
           </h1>
-          <p className="text-gray-500">Preencha os dados abaixo para salvar o produto.</p>
+          <p className="text-text-secondary">Preencha os dados abaixo para salvar o produto.</p>
         </div>
         <button
           type="button"
           onClick={() => navigate('/')}
-          className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition-colors"
+          className="px-4 py-2 bg-primary-strong text-white rounded hover:bg-primary-dark transition-colors"
         >
           Voltar ao catálogo
         </button>
@@ -170,30 +170,30 @@ export const ProductForm = () => {
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <label className="block">
-            <span className="text-gray-700">ID do produto</span>
+            <span className="text-text-primary">ID do produto</span>
             <input
               value={product.id_produto}
               onChange={(e) => handleChange('id_produto', e.target.value)}
               disabled={isEditMode}
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+              className="mt-1 block w-full rounded border-text-secondary shadow-sm focus:ring-primary-strong"
             />
           </label>
 
           <label className="block">
-            <span className="text-gray-700">Nome do produto</span>
+            <span className="text-text-primary">Nome do produto</span>
             <input
               value={product.nome_produto}
               onChange={(e) => handleChange('nome_produto', e.target.value)}
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+              className="mt-1 block w-full rounded border-text-secondary shadow-sm focus:ring-primary-strong"
             />
           </label>
 
           <label className="block">
-            <span className="text-gray-700">Categoria</span>
+            <span className="text-text-primary">Categoria</span>
             <select
               value={product.categoria_produto ?? ''}
               onChange={(e) => handleChange('categoria_produto', e.target.value)}
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+              className="mt-1 block w-full rounded border-text-secondary shadow-sm focus:ring-primary-strong"
             >
               <option value="">Selecione uma categoria</option>
               {categories.map((category) => (
@@ -208,22 +208,22 @@ export const ProductForm = () => {
           {product.categoria_produto === 'outra' && (
             <>
               <label className="block">
-                <span className="text-gray-700">Nome da nova categoria *</span>
+                <span className="text-text-primary">Nome da nova categoria *</span>
                 <input
                   value={product.nova_categoria ?? ''}
                   onChange={(e) => handleChange('nova_categoria', e.target.value)}
-                  className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+                  className="mt-1 block w-full rounded border-text-secondary shadow-sm focus:ring-primary-strong"
                   placeholder="Digite o nome da nova categoria"
                 />
               </label>
 
               <label className="block">
-                <span className="text-gray-700">URL da imagem da categoria (opcional)</span>
+                <span className="text-text-primary">URL da imagem da categoria (opcional)</span>
                 <input
                   value={product.categoria_imagem_url ?? ''}
                   onChange={(e) => handleChange('categoria_imagem_url', e.target.value)}
                   type="url"
-                  className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+                  className="mt-1 block w-full rounded border-text-secondary shadow-sm focus:ring-primary-strong"
                   placeholder="https://exemplo.com/imagem.jpg"
                 />
               </label>
@@ -233,42 +233,42 @@ export const ProductForm = () => {
 
         <div className="space-y-4">
           <label className="block">
-            <span className="text-gray-700">Peso (g)</span>
+            <span className="text-text-primary">Peso (g)</span>
             <input
               value={product.peso_produto_gramas ?? ''}
               onChange={(e) => handleChange('peso_produto_gramas', e.target.value)}
               type="number"
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+              className="mt-1 block w-full rounded border-text-secondary shadow-sm focus:ring-primary-strong"
             />
           </label>
 
           <label className="block">
-            <span className="text-gray-700">Comprimento (cm)</span>
+            <span className="text-text-primary">Comprimento (cm)</span>
             <input
               value={product.comprimento_centimetros ?? ''}
               onChange={(e) => handleChange('comprimento_centimetros', e.target.value)}
               type="number"
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+              className="mt-1 block w-full rounded border-text-secondary shadow-sm focus:ring-primary-strong"
             />
           </label>
 
           <label className="block">
-            <span className="text-gray-700">Altura (cm)</span>
+            <span className="text-text-primary">Altura (cm)</span>
             <input
               value={product.altura_centimetros ?? ''}
               onChange={(e) => handleChange('altura_centimetros', e.target.value)}
               type="number"
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+              className="mt-1 block w-full rounded border-text-secondary shadow-sm focus:ring-primary-strong"
             />
           </label>
 
           <label className="block">
-            <span className="text-gray-700">Largura (cm)</span>
+            <span className="text-text-primary">Largura (cm)</span>
             <input
               value={product.largura_centimetros ?? ''}
               onChange={(e) => handleChange('largura_centimetros', e.target.value)}
               type="number"
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-blue-500"
+              className="mt-1 block w-full rounded border-text-secondary shadow-sm focus:ring-primary-strong"
             />
           </label>
         </div>
@@ -277,14 +277,14 @@ export const ProductForm = () => {
           <button
             type="submit"
             disabled={loading || !product.id_produto.trim() || !product.nome_produto.trim() || (!isEditMode && product.categoria_produto === 'outra' && !product.nova_categoria?.trim())}
-            className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="px-6 py-3 bg-primary-strong text-white rounded hover:bg-primary-dark transition-colors disabled:opacity-50"
           >
             {loading ? 'Salvando...' : isEditMode ? 'Salvar alterações' : 'Criar produto'}
           </button>
           <button
             type="button"
             onClick={() => navigate(isEditMode ? `/product/${id}` : '/')}
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+            className="px-6 py-3 bg-surface text-text-primary rounded hover:bg-primary transition-colors"
           >
             Cancelar
           </button>

@@ -18,7 +18,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f9fafb;
+  background-color: #FFFFFF;
+  color: #1C1C1C;
 }
 
 #root {
