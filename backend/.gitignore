@@ -1,9 +1,48 @@
+# 🗄️ Banco de Dados
 __pycache__/
 *.py[cod]
 *.pyo
-.env
-*.db
+database.db
+database.db-wal
+database.db-shm
 *.sqlite3
+*.db
+
+# 🔑 Ambiente
+.env
+.env.local
+
+# 🐍 Ambientes Virtuais
 .venv/
 venv/
 env/
+ENV/
+
+# 📦 Pacotes instalados
+*.egg-info/
+dist/
+build/
+*.egg
+
+# 💻 IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.pydevproject
+.settings/
+
+# 🔄 Alembic
+alembic/versions/__pycache__/
+
+# 📊 CSV temporários/backups
+*.csv.backup
+*.csv.bak
+
+# 🔍 Logs
+*.log
+pip-log.txt
+

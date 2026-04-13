@@ -76,25 +76,12 @@ def get_products(
         query = query.outerjoin(vendas, models.Produto.id_produto == vendas.c.id_produto)\
                      .order_by(func.coalesce(vendas.c.num_vendas, 0).desc())
 
-    total = query.count()
+    # Usar distinct() para contar sem duplicatas de joins
+    total = query.distinct().count()
     products = query.offset(skip).limit(limit).all()
     
-    # Construir resposta manualmente para incluir image_url
-    products_data = []
-    for product in products:
-        product_dict = {
-            "id_produto": product.id_produto,
-            "nome_produto": product.nome_produto,
-            "categoria_produto": product.categoria_produto,
-            "peso_produto_gramas": product.peso_produto_gramas,
-            "comprimento_centimetros": product.comprimento_centimetros,
-            "altura_centimetros": product.altura_centimetros,
-            "largura_centimetros": product.largura_centimetros,
-            "image_url": product.image_url,
-        }
-        products_data.append(product_dict)
-    
-    return {"total": total, "products": products_data}
+    # Deixar Pydantic serializar automaticamente (sem loop manual)
+    return {"total": total, "products": products}
 
 
 @router.get("/products/{product_id}", response_model=ProductDetailsResponse, tags=["Products"])

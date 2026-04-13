@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import models
 from app.database import Base, engine
+from app.routers.produtos import router as produtos_router
 
 
 app = FastAPI(
@@ -10,6 +11,11 @@ app = FastAPI(
     description="API para gerenciamento de produtos, pedidos e vendedores",
     version="1.0.0",
 )
+
+
+@app.on_event("startup")
+def create_tables_on_startup():
+    Base.metadata.create_all(bind=engine)
 
 
 app.add_middleware(
@@ -20,7 +26,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from app.routers.produtos import router as produtos_router
 app.include_router(produtos_router)
 
 

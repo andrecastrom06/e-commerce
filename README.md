@@ -1,6 +1,6 @@
 # 🛒 Sistema de Gerenciamento de E-Commerce (Rocket Lab 2026)
 
-Repositório do **Sistema de Gerenciamento de E-Commerce**, um projeto Full Stack desenvolvido como parte da Atividade DEV do programa Rocket Lab 2026. 
+Repositório do **Sistema de Gerenciamento de E-Commerce**, um projeto Full Stack desenvolvido como parte da Atividade DEV do programa Rocket Lab 2026.
 
 Este sistema foi projetado para permitir que o gerente de uma loja administre seu catálogo de produtos, visualize métricas de desempenho (vendas e avaliações) e realize operações completas de gerenciamento (CRUD), tudo isso através de uma interface moderna, responsiva e otimizada.
 
@@ -11,7 +11,8 @@ O objetivo principal é integrar de forma fluida uma base de dados tratada com u
 - Visualização em catálogo de produtos com **paginação** e **filtros de busca**.
 - Acesso a detalhes de cada produto (medidas, total de vendas e média de avaliações).
 - Operações de Adicionar, Editar e Remover produtos (CRUD).
-- Experiência fluida e responsiva em qualquer dispositivo.
+- Visualizar e expandir comentários/avaliações de clientes.
+- Experiência fluida, responsiva e otimizada em qualquer dispositivo.
 
 ---
 
@@ -21,59 +22,96 @@ O projeto foi construído separando as responsabilidades em duas frentes princip
 
 ### Backend (Python)
 - **Framework:** FastAPI (Alta performance e documentação automática).
-- **ORM:** SQLAlchemy (Mapeamento objeto-relacional).
-- **Banco de Dados:** SQLite (Leve, arquivo único, ideal para o escopo).
+- **ORM:** SQLAlchemy 2.0 (Mapeamento objeto-relacional moderno).
+- **Banco de Dados:** SQLite com **WAL Mode** (Leve, arquivo único, otimizado para leitura).
+- **Migrations:** Alembic (Versionamento do schema do banco).
+- **Validação:** Pydantic 2.0 (Schemas robustos com type hints).
 
 ### Frontend (React + TypeScript)
 - **Build Tool:** Vite (Setup e Hot Module Replacement ultrarrápidos).
+- **UI Framework:** React 18 (Componentes modernos com hooks).
+- **TypeScript:** Type safety completo.
 - **Estilização:** Tailwind CSS (Framework utilitário para responsividade e padronização visual).
-- **Roteamento:** React Router DOM (Navegação SPA - Single Page Application).
-- **Requisições HTTP:** Axios (Com instâncias pré-configuradas e tratamento de erros).
-- **Metodologia de Componentização:** Atomic Design (Átomos, Moléculas, Organismos e Templates).
-- **Gerenciador de Pacotes:** pnpm (Alta performance e economia de espaço).
+- **Roteamento:** React Router DOM 6 (Navegação SPA - Single Page Application).
+- **Requisições HTTP:** Axios (Com tratamento de erros robusto).
+- **Gerenciador de Pacotes:** npm/pnpm.
 
 ---
 
-## 📂 Estrutura do Projeto e Arquivos
+## 📂 Estrutura do Projeto
 
 O repositório está dividido em duas pastas principais: `/backend` e `/frontend`.
 
-```text
-e-commerce/
+```
+rocketlab2026/
 │
-├── backend/                  # Servidor, API e Banco de Dados
-│   ├── data/                 # 🗄️ Origem dos Dados: Contém os arquivos .csv tratados (dim_produtos, fat_itens_pedidos, etc.)
-│   ├── main.py               # Ponto de entrada da API, definição das rotas (Endpoints)
-│   ├── models.py             # Modelos do SQLAlchemy (Estrutura das tabelas relacionais)
-│   ├── database.py           # Configuração de conexão com o SQLite
-│   ├── seed.py               # Script ETL de população do banco de dados a partir dos CSVs
-│   ├── database.db           # Banco de dados gerado automaticamente
-│   └── requirements.txt      # Lista de dependências Python
+├── backend/                          # Servidor, API e Banco de Dados
+│   ├── app/
+│   │   ├── main.py                   # Ponto de entrada da API, configuração do FastAPI
+│   │   ├── database.py               # Configuração do SQLite com otimizações (WAL, cache, etc)
+│   │   ├── config.py                 # Variáveis de ambiente
+│   │   ├── models/                   # 📦 Modelos do SQLAlchemy (com índices)
+│   │   │   ├── __init__.py
+│   │   │   ├── produto.py
+│   │   │   ├── consumidor.py
+│   │   │   ├── vendedor.py
+│   │   │   ├── pedido.py
+│   │   │   ├── item_pedido.py
+│   │   │   ├── avaliacao_pedido.py
+│   │   │   └── categoria_imagem.py
+│   │   ├── schemas/                  # 📋 Schemas do Pydantic (Request/Response)
+│   │   │   ├── produto.py            # ProductCreate, ProductResponse, etc
+│   │   │   ├── consumidor.py
+│   │   │   ├── vendedor.py
+│   │   │   └── ...
+│   │   └── routers/                  # 🛣️ Rotas da API (APIRouter modularizado)
+│   │       ├── produtos.py           # Endpoints: GET/POST/PUT/DELETE /products
+│   │       ├── consumidores.py
+│   │       └── ...
+│   │
+│   ├── alembic/                      # Migrations do banco de dados
+│   │   ├── versions/
+│   │   └── env.py
+│   ├── data/                         # 📊 Arquivos CSV (origem dos dados)
+│   │   ├── dim_produtos.csv
+│   │   ├── dim_consumidores.csv
+│   │   └── ...
+│   │
+│   ├── import_from_csv.py            # Script ETL (importa CSVs → Database)
+│   ├── alembic.ini                   # Config do Alembic
+│   ├── requirements.txt              # Dependências Python
+│   ├── .env.example                  # Variáveis de ambiente (exemplo)
+│   ├── database.db                   # Banco de dados SQLite
+│   └── README.md                     # Documentação do backend
 │
-└── frontend/                 # Interface de Usuário
+└── frontend/                         # Interface de Usuário
     ├── src/
-    │   ├── components/       # Componentes estruturados via Atomic Design
-    │   │   ├── atoms/        # Botões, Inputs, Labels (Elementos indivisíveis)
-    │   │   ├── molecules/    # Barras de busca, Cards simplificados
-    │   │   ├── organisms/    # Grids de produtos, Formulários completos
-    │   │   └── templates/    # Layouts base (Ex: Header + Conteúdo + Footer)
-    │   ├── pages/            # Telas da aplicação (Home/Catálogo, Detalhes, Gerenciamento)
-    │   ├── services/         # Configuração da API (Instância do Axios)
-    │   ├── hooks/            # Custom Hooks (ex: useProducts para chamadas assíncronas)
-    │   ├── types/            # Interfaces globais do TypeScript
-    │   ├── App.tsx           # Configuração das rotas
-    │   └── main.tsx          # Ponto de injeção do React no DOM
-    ├── tailwind.config.js    # Configurações de tema e cores do Tailwind
-    └── package.json          # Dependências e scripts do Node/pnpm
+    │   ├── components/               # Componentes React reutilizáveis
+    │   │   ├── ProductCard.tsx
+    │   │   └── ...
+    │   ├── pages/                    # Telas da aplicação
+    │   │   ├── Home.tsx              # Catálogo com paginação e filtros
+    │   │   ├── ProductDetail.tsx     # Detalhes do produto + comentários
+    │   │   └── ProductForm.tsx       # Criar/Editar produto
+    │   ├── types.ts                  # Interfaces TypeScript
+    │   ├── App.tsx                   # Configuração de rotas (React Router)
+    │   ├── main.tsx                  # Ponto de entrada
+    │   └── globals.css               # Estilos globais
+    │
+    ├── package.json                  # Dependências e scripts
+    ├── tsconfig.json                 # Configuração TypeScript
+    ├── tailwind.config.js            # Tema e classe do Tailwind CSS
+    ├── vite.config.ts                # Build config Vite
+    └── README.md                     # Documentação do frontend
 ```
 
 ---
 
 ## 🚀 Como Instalar e Rodar o Projeto
 
-Para executar este projeto localmente, certifique-se de ter instalado: **Python 3.9+**, **Node.js (v18+)** e o **pnpm**.
+Para executar este projeto localmente, certifique-se de ter instalado: **Python 3.11+**, **Node.js (v18+)**.
 
-### 1. Configurando e Populando o Backend
+### 1. Configurando o Backend
 Abra o terminal e navegue até a pasta `backend`:
 
 ```bash
@@ -82,21 +120,27 @@ cd backend
 
 # Crie e ative um ambiente virtual (Recomendado)
 python -m venv venv
-source venv/bin/activate  # No Windows use: venv\Scripts\activate
+
+# Windows:
+venv\Scripts\activate
+# Mac/Linux:
+source venv/bin/activate
 
 # Instale as dependências
 pip install -r requirements.txt
 
 # Popule o banco de dados com os CSVs tratados
-# Este comando lê a pasta /data e gera o arquivo database.db
-python seed.py
+python import_from_csv.py --reset
 
 # Inicie o servidor FastAPI
-uvicorn main:app --reload
+python -m app.main
+# Ou com auto-reload:
+uvicorn app.main:app --reload
 ```
 
-Servidor Backend: http://localhost:8000
-Swagger (Documentação): http://localhost:8000/docs
+**Backend rodando em:** http://localhost:8000  
+**Documentação Swagger:** http://localhost:8000/docs  
+**Documentação ReDoc:** http://localhost:8000/redoc
 
 ### 2. Configurando o Frontend
 Abra um novo terminal e navegue até a pasta frontend:
@@ -105,36 +149,111 @@ Abra um novo terminal e navegue até a pasta frontend:
 # Entre na pasta do frontend
 cd frontend
 
-# Instale as dependências usando pnpm
+# Instale as dependências
+npm install
+# ou
 pnpm install
 
 # Inicie o servidor de desenvolvimento
+npm run dev
+# ou
 pnpm dev
 ```
 
-Interface Web: Geralmente disponível em http://localhost:5173.
+**Interface Web:** http://localhost:5173
 
-## 📡 Documentação da API (Endpoints)
-A API foi documentada para facilitar a integração. Abaixo as rotas principais:
+---
 
-```text
-GET /products: Retorna o catálogo paginado (suporta limit, skip e o filtro search).
+## 📡 Endpoints da API
 
-GET /products/{id}: Retorna os detalhes do produto e métricas (vendas e média de nota).
-
-POST /products: Cria um novo produto.
-
-PUT /products/{id}: Atualiza os dados de um produto existente.
-
-DELETE /products/{id}: Remove um produto do catálogo.
-
+### Produtos
+```
+GET    /categories                      # Lista de categorias para filtro
+GET    /products                        # Catálogo com paginação, busca, filtros e ordenação
+GET    /products/{product_id}           # Detalhes do produto + métricas + comentários
+POST   /products                        # Criar novo produto
+PUT    /products/{product_id}           # Atualizar produto
+DELETE /products/{product_id}           # Deletar produto
 ```
 
-## ✨ Funcionalidades Extras Implementadas
-Para elevar a qualidade da entrega e atender às sugestões da atividade, foram aplicados:
+**Parâmetros GET /products:**
+- `search` (string): Busca por nome
+- `category` (string): Filtrar por categoria
+- `sort_by` (string): Ordenar por `nome`, `avaliacao` ou `vendas`
+- `skip` (int): Pagination offset
+- `limit` (int): Items por página (padrão: 12)
 
-- Responsividade Avançada: Interface totalmente adaptável para dispositivos móveis utilizando Tailwind CSS.
-- Paginação via Backend: O catálogo carrega dados sob demanda, garantindo performance mesmo com grandes volumes de produtos.
-- Filtros de Busca: Barra de pesquisa funcional que filtra produtos diretamente no banco de dados.
-- ETL Customizado: O arquivo seed.py utiliza Pandas com a lógica db.merge(), permitindo que a carga de dados seja re-executada sem duplicar registros ou quebrar o banco.
-- Interface em Português: Toda a experiência do usuário foi traduzida para atender ao público-alvo (Gerente da Loja), conforme as diretrizes da monitoria.
+**Exemplo:**
+```
+GET /products?search=telefone&category=eletrônicos&sort_by=avaliacao&skip=0&limit=12
+```
+
+---
+
+## ⚡ Otimizações Implementadas
+
+### Backend
+- ✅ **WAL Mode SQLite**: Maior performance em leitura simultânea
+- ✅ **Índices em BD**: Busca/filtro por `nome_produto` e `categoria_produto`
+- ✅ **Cache SQLite**: 10.000 páginas (padrão aumentado)
+- ✅ **Queries Otimizadas**: Uso de `distinct()` + joins eficientes
+- ✅ **Serialização automática Pydantic**: Sem loops manuais
+- ✅ **Arquitetura Modular**: Separação de concerns (schemas, routers, models)
+
+### Frontend
+- ✅ **Paginação no Backend**: Carrega dados sob demanda
+- ✅ **Lazy Loading de Comentários**: Expande comentários conforme necessário
+- ✅ **Responsividade Total**: Tailwind CSS com breakpoints
+- ✅ **Hot Module Replacement (Vite)**: Reload instantâneo em dev
+
+---
+
+## 🔧 Stacks e Dependências
+
+### Backend
+```
+fastapi>=0.104.0
+sqlalchemy>=2.0.0
+pydantic>=2.0.0
+alembic>=1.12.0
+uvicorn>=0.24.0
+```
+
+### Frontend
+```
+react@18
+react-router-dom@6
+axios@1.6
+tailwindcss@3
+typescript
+```
+
+---
+
+## ✨ Funcionalidades Principais
+
+- 🛍️ **Catálogo Dinâmico**: Paginação e busca em tempo real
+- 🔍 **Filtros Avançados**: Por categoria, nome e ordenação customizada
+- ⭐ **Sistema de Avaliações**: Visualize média de notas e comentários dos clientes
+- 📊 **Métricas de Vendas**: Total de vendas por produto
+- 🎯 **CRUD Completo**: Criar, editar, visualizar e deletar produtos
+- 💬 **Comentários Expandíveis**: Carregue todos os comentários sob demanda
+- 📱 **Responsivo**: Funciona perfeitamente em mobile, tablet e desktop
+- 🚀 **Performance**: API otimizada e interface ágil
+
+---
+
+## 📝 Estrutura de Dados (Schema)
+
+O banco contém 7 tabelas em um esquema dimensional (Data Warehouse):
+
+**Dimensões (Reference):**
+- `produtos` - Catálogo de produtos
+- `consumidores` - Clientes
+- `vendedores` - Vendedores
+- `categoria_imagens` - Categorias com URLs de imagens
+
+**Fatos (Transactional):**
+- `pedidos` - Pedidos realizados
+- `itens_pedidos` - Itens dentro de cada pedido
+- `avaliacoes_pedidos` - Avaliações/comentários dos clientes

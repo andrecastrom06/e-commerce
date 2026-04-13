@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import String, Float
+from sqlalchemy import String, Float, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -25,7 +25,11 @@ class Produto(Base):
         uselist=False,
     )
 
+    __table_args__ = (
+        Index("idx_nome_produto", "nome_produto"),
+        Index("idx_categoria_produto", "categoria_produto"),
+    )
+
     @property
     def image_url(self) -> Optional[str]:
         return self.categoria_imagem.link if self.categoria_imagem else None
-
