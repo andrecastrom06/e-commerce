@@ -1,0 +1,1 @@
+# Placeholder for avaliacao_pedido schemas

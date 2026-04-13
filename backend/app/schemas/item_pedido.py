@@ -1,0 +1,1 @@
+# Placeholder for item_pedido schemas
