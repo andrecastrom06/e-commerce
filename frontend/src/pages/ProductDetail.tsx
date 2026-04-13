@@ -22,15 +22,18 @@ export const ProductDetail = () => {
       const suffix = loadAllComments ? '?load_all_comments=true' : '';
       const response = await axios.get<ProductDetails>(`http://localhost:8000/products/${id}${suffix}`);
       setProduct(response.data);
-      if (loadAllComments) {
-        setShowAllComments(true);
-      }
     } catch (err) {
       setError('Não foi possível carregar os detalhes do produto.');
     } finally {
       setLoading(false);
       setLoadingComments(false);
     }
+  };
+
+  const handleToggleComments = () => {
+    const newState = !showAllComments;
+    setShowAllComments(newState);
+    fetchProduct(newState);
   };
 
   useEffect(() => {
@@ -188,11 +191,19 @@ export const ProductDetail = () => {
 
           {product.total_comments && product.comentarios.length < product.total_comments && (
             <button
-              onClick={() => fetchProduct(true)}
+              onClick={handleToggleComments}
               disabled={loadingComments}
               className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
-              {loadingComments ? 'Carregando comentários...' : 'Carregar todos os comentários'}
+              {loadingComments ? 'Carregando comentários...' : showAllComments ? 'Ocultar comentários expandidos' : 'Carregar todos os comentários'}
+            </button>
+          )}
+          {showAllComments && product.total_comments && product.comentarios.length === product.total_comments && (
+            <button
+              onClick={handleToggleComments}
+              className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            >
+              Ocultar comentários expandidos
             </button>
           )}
         </div>
